@@ -24,19 +24,18 @@ public class SendService<T extends AbstractDataModel> {
     @Value("${addres.mastermanager}")
     private String masterManager;
 
+    // TODO переделать на настоящий masterGate
+    @Value("${addres.mastergate}")
+    private String masterGate;
+
     private Map<String, String> actualMasterAddres = new HashMap<>();
     private RestTemplate restToMasterManager = new RestTemplate();
 
-    public boolean saveDocument(T model) {
+    public void saveDocument(T model) {
         if(model instanceof BaseDocument) {
-            System.out.println(((BaseDocument) model).getUUID());
+            restToMasterManager.postForObject(masterGate, model, BaseDocument.class);
         }
-        return true;
     }
-
-//    private boolean sendDataModel(T classModel, String url) {
-//
-//    }
 
     @Scheduled(fixedDelay = 50000)
     private void masterSheduler(){

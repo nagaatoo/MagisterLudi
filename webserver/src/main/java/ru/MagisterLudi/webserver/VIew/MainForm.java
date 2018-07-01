@@ -8,10 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import ru.MagisterLudi.webserver.Model.BaseDocument;
 import ru.MagisterLudi.webserver.Service.SendService;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
+import java.util.UUID;
 
 @SpringUI(path = "/upload")
 @Theme("valo")
@@ -19,6 +17,11 @@ public class MainForm extends UI {
 
     private final int MAX_LENGHT_FIELD = 15;
     private Button findButton;
+    private TextField fileNameDownload;
+    private TextField ownerNameDownload;
+    private TextField fileNameUpload;
+    private TextArea descriptionUpload;
+    private TextField ownerNameUpload;
     private Grid<BaseDocument> gridFile;
     private UploadReceaver uploadReceaver = new UploadReceaver();
 
@@ -41,15 +44,15 @@ public class MainForm extends UI {
     }
 
     private VerticalLayout getDownloadLayout() {
-        VerticalLayout vl =new VerticalLayout();
+        VerticalLayout vl = new VerticalLayout();
         HorizontalLayout hl = new HorizontalLayout();
-        TextField fileName = getTextField("Имя файла");
-        TextField ownerName = getTextField("Владелец");
+        fileNameDownload = getTextField("Имя файла");
+        ownerNameDownload = getTextField("Владелец");
         findButton = new Button("Найти");
         settingGridFile();
 
-        hl.addComponent(fileName);
-        hl.addComponent(ownerName);
+        hl.addComponent(fileNameDownload);
+        hl.addComponent(ownerNameDownload);
         hl.addComponent(findButton);
 
         vl.addComponent(hl);
@@ -60,16 +63,17 @@ public class MainForm extends UI {
     private VerticalLayout getUploadLayout() {
         VerticalLayout vl = new VerticalLayout();
 
-        TextField fileName = getTextField("Имя файла");
-        TextField description = getTextField("Описание", 2000);
-        TextField ownerName = getTextField("Владелец");
-        Upload upload = new Upload("upload there", uploadReceaver);
+        fileNameUpload = getTextField("Имя файла");
+        ownerNameUpload = getTextField("Владелец");
+        descriptionUpload = getTextArea("Описание", 2000);
+        Upload upload = new Upload("", uploadReceaver);
+        upload.setButtonCaption("Загрузить");
         upload.addSucceededListener(uploadReceaver);
         upload.setImmediateMode(false);
 
-        vl.addComponent(fileName);
-        vl.addComponent(description);
-        vl.addComponent(ownerName);
+        vl.addComponent(fileNameUpload);
+        vl.addComponent(descriptionUpload);
+        vl.addComponent(ownerNameUpload);
         vl.addComponent(upload);
 
         return vl;
@@ -84,6 +88,17 @@ public class MainForm extends UI {
         field.setCaption(name);
         field.setMaxLength(lenght);
 
+        return field;
+    }
+
+    private TextArea getTextArea(String name) {
+        return getTextArea(name, MAX_LENGHT_FIELD);
+    }
+
+    private TextArea getTextArea(String name, int lenght) {
+        TextArea field=  new TextArea();
+        field.setMaxLength(lenght);
+        field.setCaption(name);
         return field;
     }
 
@@ -107,8 +122,27 @@ public class MainForm extends UI {
 
     private void makeSaveDocumentRequest(File file) {
         BaseDocument baseDocument = new BaseDocument();
-        baseDocument.setUUID("000");
+        baseDocument.setUUID(getNewUUID());
+        baseDocument.setFileName(fileNameUpload.getValue());
+        baseDocument.setOwnerName(ownerNameUpload.getValue());
+        baseDocument.setDescription(descriptionUpload.getValue());
+        baseDocument.setFile(fileToByteArray(file));
         sendService.saveDocument(baseDocument);
+    }
+
+    private byte[] fileToByteArray(File file) {
+        byte[] b = new byte[(int) file.length()];
+        try {
+            InputStream stream = new FileInputStream(file);
+            stream.read(b);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return b;
+    }
+
+    private String getNewUUID() {
+        return UUID.randomUUID().toString();
     }
 
     class UploadReceaver implements Upload.Receiver, Upload.SucceededListener {

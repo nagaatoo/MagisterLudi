@@ -11,6 +11,10 @@ public class BaseDocument implements AbstractDataModel{
     private String ownerName;
     private byte[] file;
 
+    public BaseDocument() {
+
+    }
+
     public String getOwnerName() {
         return ownerName;
     }
@@ -35,10 +39,6 @@ public class BaseDocument implements AbstractDataModel{
         this.fileName = fileName;
     }
 
-    public BaseDocument(){
-
-    }
-
     public String getUUID() {
         return uuid;
     }
@@ -47,5 +47,12 @@ public class BaseDocument implements AbstractDataModel{
         this.uuid = uuid;
     }
 
+    public byte[] getFile() {
+        return file;
+    }
+
+    public void setFile(byte[] file) {
+        this.file = file;
+    }
 
 }

@@ -11,6 +11,10 @@ public class BaseDocument {
     private String ownerName;
     private byte[] file;
 
+    public BaseDocument() {
+
+    }
+
     public String getOwnerName() {
         return ownerName;
     }
@@ -35,16 +39,20 @@ public class BaseDocument {
         this.fileName = fileName;
     }
 
-    public BaseDocument(){
-
-    }
-
     public String getUUID() {
         return uuid;
     }
 
     public void setUUID(String uuid) {
         this.uuid = uuid;
+    }
+
+    public byte[] getFile() {
+        return file;
+    }
+
+    public void setFile(byte[] file) {
+        this.file = file;
     }
 
 }

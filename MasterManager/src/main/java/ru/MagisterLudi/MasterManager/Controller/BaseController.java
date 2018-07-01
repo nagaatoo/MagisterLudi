@@ -2,10 +2,12 @@ package ru.MagisterLudi.MasterManager.Controller;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import ru.MagisterLudi.MasterManager.Enums.MessageStatus;
+import ru.MagisterLudi.MasterManager.Models.BaseDocument;
 import ru.MagisterLudi.MasterManager.Models.MasterServers;
 import ru.MagisterLudi.MasterManager.Service.ManagerController;
 
@@ -24,7 +26,7 @@ public class BaseController {
     }
 
     @RequestMapping(path = "/accessServers", method = RequestMethod.GET)
-    public MasterServers getServerAddres(MasterServers document, HttpServletRequest request){
+    public MasterServers getServerAddres(HttpServletRequest request){
         MasterServers servers = new MasterServers();
         servers.getServers().put("Moscow.ru", "ya.ru");
         servers.getServers().put("dream.com", "8.8.8.8");
@@ -34,8 +36,10 @@ public class BaseController {
     }
 
     // временное, будет не тут
-    @RequestMapping(path = "/saveFile", method = RequestMethod.GET)
-    public void getFileTest() {
-
+    @RequestMapping(path = "/saveFile", method = RequestMethod.POST)
+    public void getFileTest(@RequestBody BaseDocument document) {
+        for (byte b : document.getFile()) {
+            System.out.println(b);
+        }
     }
 }
